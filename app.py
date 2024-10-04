@@ -26,3 +26,10 @@ with open('BC 240 QA.csv', mode='r', encoding='utf-8') as infile:
         answer = row['Answer'].strip()
         faq_data[question] = answer
         faq_embeddings[question] = None  # Placeholder for precomputed embeddings
+
+# Function to get embeddings
+def get_embeddings(text):
+    inputs = tokenizer(text, return_tensors='pt', padding=True, truncation=True)
+    with torch.no_grad():
+        embeddings = embedding_model(**inputs).last_hidden_state.mean(dim=1)  # Mean pooling for single vector
+    return embeddings
