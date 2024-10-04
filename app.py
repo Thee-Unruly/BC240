@@ -12,3 +12,7 @@ embedding_model = AutoModel.from_pretrained("sentence-transformers/all-MiniLM-L6
 # Set padding token for tokenizer
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token  # Use eos_token as the pad_token
+    
+# Initialize the T5 model for response generation
+response_model = T5ForConditionalGeneration.from_pretrained("t5-small")
+
