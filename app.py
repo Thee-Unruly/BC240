@@ -76,3 +76,17 @@ def chatbot_response(user_input):
     print(f"Generated response: {response}")
     
     return response
+
+@cl.on_message
+async def main(message: str):
+    # Get user message
+    user_message = message.content if hasattr(message, 'content') else message
+
+    # Debug: Print user message
+    print(f"Received message: {user_message}")
+
+    # Generate response
+    response = chatbot_response(user_message)
+
+    # Send response back to the user
+    await cl.Message(content=response).send()
