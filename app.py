@@ -12,7 +12,17 @@ embedding_model = AutoModel.from_pretrained("sentence-transformers/all-MiniLM-L6
 # Set padding token for tokenizer
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token  # Use eos_token as the pad_token
-    
+
 # Initialize the T5 model for response generation
 response_model = T5ForConditionalGeneration.from_pretrained("t5-small")
 
+# Load FAQ data
+faq_data = {}
+faq_embeddings = {}
+with open('BC 240 QA.csv', mode='r', encoding='utf-8') as infile:
+    reader = csv.DictReader(infile)
+    for row in reader:
+        question = row['Question'].strip().lower()
+        answer = row['Answer'].strip()
+        faq_data[question] = answer
+        faq_embeddings[question] = None  # Placeholder for precomputed embeddings
