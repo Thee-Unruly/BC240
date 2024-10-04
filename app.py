@@ -37,3 +37,42 @@ def get_embeddings(text):
 # Precompute embeddings for FAQ questions
 for question in faq_data.keys():
     faq_embeddings[question] = get_embeddings(question)
+
+# Define the chatbot response function
+def chatbot_response(user_input):
+    user_input = user_input.lower().strip()
+    
+    # Debug: Print user input
+    print(f"User input received: {user_input}")
+
+    # Get embeddings for user input
+    user_input_embedding = get_embeddings(user_input)
+
+    # Use cosine similarity to find the best FAQ match
+    best_match = None
+    best_score = 0
+
+    for question, faq_embedding in faq_embeddings.items():
+        score = torch.cosine_similarity(user_input_embedding, faq_embedding).item()
+
+        # Debug: Print similarity score
+        print(f"Similarity score for '{question}': {score}")
+
+        if score > best_score:
+            best_score = score
+            best_match = question
+
+    # Check if the best match is above the threshold
+    if best_match and best_score > 0.7:  # Adjust threshold as needed
+        print(f"Best match found: {best_match} with score {best_score}")
+        return faq_data[best_match]
+
+    # If no match found, generate a response using the T5 model
+    inputs = tokenizer("generate: " + user_input, return_tensors='pt', padding=True, truncation=True)
+    bot_output = response_model.generate(inputs['input_ids'], attention_mask=inputs['attention_mask'], max_length=100)
+    response = tokenizer.decode(bot_output[0], skip_special_tokens=True)
+
+    # Debug: Print the generated response
+    print(f"Generated response: {response}")
+    
+    return response
