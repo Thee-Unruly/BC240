@@ -33,3 +33,7 @@ def get_embeddings(text):
     with torch.no_grad():
         embeddings = embedding_model(**inputs).last_hidden_state.mean(dim=1)  # Mean pooling for single vector
     return embeddings
+
+# Precompute embeddings for FAQ questions
+for question in faq_data.keys():
+    faq_embeddings[question] = get_embeddings(question)
